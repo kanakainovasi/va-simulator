@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { prisma } from '@/lib/prisma'
+import { prisma, ensureDbReady } from '@/lib/prisma'
 import { ProjectCatalogClient } from './ProjectCatalogClient'
 
 export const metadata: Metadata = {
@@ -30,6 +30,7 @@ interface ProjectsPageProps {
 }
 
 export default async function ProjectsPage({ searchParams }: ProjectsPageProps) {
+  await ensureDbReady()
   const params = await searchParams
 
   const projects = await prisma.project.findMany({

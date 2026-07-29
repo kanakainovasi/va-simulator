@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { prisma, ensureDbReady, syncDbToBlob } from '@/lib/prisma'
+
+export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
+    await ensureDbReady()
+
     const { name, email, category, message } = await request.json()
 
     if (!name || !email || !category || !message) {
@@ -28,6 +32,8 @@ export async function POST(request: NextRequest) {
         message,
       },
     })
+
+    await syncDbToBlob()
 
     // Send email via Web3Forms
     try {
@@ -72,6 +78,8 @@ Feedback ID: ${feedback.id}
 
 export async function GET() {
   try {
+    await ensureDbReady()
+
     const feedbacks = await prisma.feedback.findMany({
       orderBy: { createdAt: 'desc' },
     })

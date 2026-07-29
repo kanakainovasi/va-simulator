@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma'
+import { prisma, ensureDbReady } from '@/lib/prisma'
 import { Award, Folder, MessageSquare, TrendingUp, Clock, CheckCircle, AlertCircle } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
@@ -67,6 +67,7 @@ function CategoryBadge({ category }: { category: string }) {
 
 async function getStats() {
   try {
+    await ensureDbReady()
     const [totalProjects, totalCertificates, totalFeedback, pendingFeedback, feedbacks, categoryCounts] =
       await Promise.all([
         prisma.project.count(),

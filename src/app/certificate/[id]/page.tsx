@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { prisma } from "@/lib/prisma";
+import { prisma, ensureDbReady } from "@/lib/prisma";
 import CertificatePreview from "@/components/CertificatePreview";
 import CertificateActions from "./CertificateActions";
 
@@ -10,6 +10,7 @@ interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  await ensureDbReady();
   const { id } = await params;
   const certificate = await prisma.certificate.findUnique({
     where: { id },
@@ -36,6 +37,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function CertificatePage({ params }: PageProps) {
+  await ensureDbReady();
   const { id } = await params;
 
   const certificate = await prisma.certificate.findUnique({

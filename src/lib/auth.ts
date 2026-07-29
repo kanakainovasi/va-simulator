@@ -31,11 +31,13 @@ export async function verifyPassword(
 }
 
 export async function createSession(user: SessionUser): Promise<string> {
+  console.log('[AUTH] Creating session for user:', user.email)
   const token = await new SignJWT({ user })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('7d')
     .sign(getJwtSecret())
+  console.log('[AUTH] JWT signed successfully')
 
   const cookieStore = await cookies()
   cookieStore.set(SESSION_COOKIE, token, {

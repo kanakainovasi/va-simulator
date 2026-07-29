@@ -1,12 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { prisma, ensureDbReady, syncDbToBlob } from '@/lib/prisma'
 import { hashPassword, createSession } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: NextRequest) {
+  console.log('[REGISTER] Request received')
   try {
-    const { name, email, password } = await request.json()
+    await ensureDbReady()
+
+    const body = await request.json()
+    const { name, email, password } = body
+    console.log('[REGISTER] Payload:', { name: !!name, email: !!email, password: !!password })
 
     if (!name || !email || !password) {
+      console.log('[REGISTER] Missing fields')
       return NextResponse.json(
         { error: 'Nama, email, dan password wajib diisi' },
         { status: 400 }
@@ -14,43 +22,50 @@ export async function POST(request: NextRequest) {
     }
 
     if (password.length < 6) {
+      console.log('[REGISTER] Password too short')
       return NextResponse.json(
         { error: 'Password minimal 6 karakter' },
         { status: 400 }
       )
     }
 
-    // Check if user already exists
+    console.log('[REGISTER] Checking existing user for email:', email)
     const existingUser = await prisma.user.findUnique({
       where: { email },
     })
 
     if (existingUser) {
+      console.log('[REGISTER] Email already registered:', email)
       return NextResponse.json(
         { error: 'Email sudah terdaftar' },
         { status: 400 }
       )
     }
 
-    // Hash password and store in bio field
+    console.log('[REGISTER] Hashing password...')
     const hashedPassword = await hashPassword(password)
+    console.log('[REGISTER] Password hashed, creating user...')
 
-    // Create user
     const user = await prisma.user.create({
       data: {
         name,
         email,
-        bio: `pwd:${hashedPassword}`, // Store hashed password with prefix
+        bio: `pwd:${hashedPassword}`,
       },
     })
+    console.log('[REGISTER] User created with id:', user.id)
 
-    // Create session
+    await syncDbToBlob()
+    console.log('[REGISTER] DB synced to Blob')
+
+    console.log('[REGISTER] Creating session...')
     await createSession({
       id: user.id,
       name: user.name || '',
       email: user.email || '',
       image: user.image,
     })
+    console.log('[REGISTER] Session created, returning success')
 
     return NextResponse.json({
       success: true,
@@ -62,9 +77,11 @@ export async function POST(request: NextRequest) {
       },
     })
   } catch (error) {
-    console.error('Register error:', error)
+    console.error('[REGISTER] ERROR:', error)
+    const message = error instanceof Error ? error.message : 'Unknown error'
+    console.error('[REGISTER] Error message:', message)
     return NextResponse.json(
-      { error: 'Gagal mendaftar' },
+      { error: 'Gagal mendaftar: ' + message },
       { status: 500 }
     )
   }

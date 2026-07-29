@@ -1,11 +1,15 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma, ensureDbReady } from '@/lib/prisma';
+
+export const dynamic = 'force-dynamic'
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await ensureDbReady();
+
     const { id } = await params;
 
     if (!id) {

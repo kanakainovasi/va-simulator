@@ -26,10 +26,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshSession = useCallback(async () => {
     try {
+      console.log('[AUTH] Refreshing session...')
       const res = await fetch('/api/auth/session')
       const data = await res.json()
+      console.log('[AUTH] Session response:', data.user ? 'logged in' : 'guest')
       setUser(data.user)
-    } catch {
+    } catch (err) {
+      console.error('[AUTH] Session refresh failed:', err)
       setUser(null)
     } finally {
       setLoading(false)
@@ -42,38 +45,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
+      console.log('[AUTH] Login attempt for:', email)
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       })
       const data = await res.json()
+      console.log('[AUTH] Login response:', res.status, data.success ? 'success' : data.error)
 
       if (data.success) {
         setUser(data.user)
         return { success: true }
       }
       return { success: false, error: data.error }
-    } catch {
+    } catch (err) {
+      console.error('[AUTH] Login fetch failed:', err)
       return { success: false, error: 'Gagal terhubung ke server' }
     }
   }
 
   const register = async (name: string, email: string, password: string) => {
     try {
+      console.log('[AUTH] Register attempt for:', email)
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),
       })
       const data = await res.json()
+      console.log('[AUTH] Register response:', res.status, data.success ? 'success' : data.error)
 
       if (data.success) {
         setUser(data.user)
         return { success: true }
       }
       return { success: false, error: data.error }
-    } catch {
+    } catch (err) {
+      console.error('[AUTH] Register fetch failed:', err)
       return { success: false, error: 'Gagal terhubung ke server' }
     }
   }

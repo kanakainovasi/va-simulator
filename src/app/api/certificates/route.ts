@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma, ensureDbReady, syncDbToBlob } from '@/lib/prisma';
+
+export const dynamic = 'force-dynamic'
 
 function generateCertificateCode(category: string): string {
   const year = new Date().getFullYear();
@@ -16,6 +18,8 @@ function generateCertificateCode(category: string): string {
 
 export async function POST(request: Request) {
   try {
+    await ensureDbReady();
+
     const body = await request.json();
     const { userId, projectId } = body;
 
@@ -61,6 +65,8 @@ export async function POST(request: Request) {
         certificateCode,
       },
     });
+
+    await syncDbToBlob();
 
     return NextResponse.json({
       success: true,

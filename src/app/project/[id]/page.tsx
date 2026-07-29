@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { prisma } from '@/lib/prisma'
+import { prisma, ensureDbReady } from '@/lib/prisma'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -16,6 +16,7 @@ import { ResourceCenter } from '@/components/ResourceCenter'
 import type { Metadata } from 'next'
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  await ensureDbReady()
   const project = await prisma.project.findUnique({
     where: { id: params.id },
     include: { category: true },
@@ -33,6 +34,7 @@ export default async function ProjectPage({
 }: {
   params: { id: string }
 }) {
+  await ensureDbReady()
   const project = await prisma.project.findUnique({
     where: { id: params.id },
     include: { category: true },

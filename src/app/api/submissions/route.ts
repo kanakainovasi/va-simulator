@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma, ensureDbReady, syncDbToBlob } from '@/lib/prisma';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
   try {
+    await ensureDbReady();
+
     const formData = await request.formData();
     const projectId = formData.get('projectId') as string;
     const outputUrl = formData.get('outputUrl') as string;
@@ -62,6 +66,8 @@ export async function POST(request: Request) {
         status: 'COMPLETED',
       },
     });
+
+    await syncDbToBlob();
 
     return NextResponse.json({
       success: true,
