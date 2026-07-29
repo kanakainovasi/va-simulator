@@ -2,11 +2,13 @@ import { SignJWT, jwtVerify } from 'jose'
 import bcrypt from 'bcryptjs'
 import { cookies } from 'next/headers'
 
-if (!process.env.JWT_SECRET) {
-  throw new Error('JWT_SECRET environment variable is required')
+function getJwtSecret() {
+  const secret = process.env.JWT_SECRET
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable is required')
+  }
+  return new TextEncoder().encode(secret)
 }
-
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET)
 
 const SESSION_COOKIE = 'session-token'
 
@@ -33,7 +35,7 @@ export async function createSession(user: SessionUser): Promise<string> {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('7d')
-    .sign(JWT_SECRET)
+    .sign(getJwtSecret())
 
   const cookieStore = await cookies()
   cookieStore.set(SESSION_COOKIE, token, {
@@ -53,7 +55,7 @@ export async function getSession(): Promise<SessionUser | null> {
     const token = cookieStore.get(SESSION_COOKIE)?.value
     if (!token) return null
 
-    const { payload } = await jwtVerify(token, JWT_SECRET)
+    const { payload } = await jwtVerify(token, getJwtSecret())
     const user = payload.user as SessionUser
     return user
   } catch {
