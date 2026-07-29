@@ -65,32 +65,47 @@ function CategoryBadge({ category }: { category: string }) {
   )
 }
 
+async function getStats() {
+  try {
+    const [totalProjects, totalCertificates, totalFeedback, pendingFeedback, feedbacks, categoryCounts] =
+      await Promise.all([
+        prisma.project.count(),
+        prisma.certificate.count(),
+        prisma.feedback.count(),
+        prisma.feedback.count({ where: { status: 'pending' } }),
+        prisma.feedback.findMany({
+          orderBy: { createdAt: 'desc' },
+          take: 50,
+        }),
+        prisma.feedback.groupBy({
+          by: ['category'],
+          _count: true,
+        }),
+      ])
+
+    const categoryMap = Object.fromEntries(
+      categoryCounts.map((c) => [c.category, c._count])
+    )
+
+    return { totalProjects, totalCertificates, totalFeedback, pendingFeedback, feedbacks, categoryMap }
+  } catch {
+    return {
+      totalProjects: 0,
+      totalCertificates: 0,
+      totalFeedback: 0,
+      pendingFeedback: 0,
+      feedbacks: [],
+      categoryMap: {} as Record<string, number>,
+    }
+  }
+}
+
 export default async function AdminPage() {
-  const [totalProjects, totalCertificates, totalFeedback, pendingFeedback, feedbacks] =
-    await Promise.all([
-      prisma.project.count(),
-      prisma.certificate.count(),
-      prisma.feedback.count(),
-      prisma.feedback.count({ where: { status: 'pending' } }),
-      prisma.feedback.findMany({
-        orderBy: { createdAt: 'desc' },
-        take: 50,
-      }),
-    ])
-
-  const categoryCounts = await prisma.feedback.groupBy({
-    by: ['category'],
-    _count: true,
-  })
-
-  const categoryMap = Object.fromEntries(
-    categoryCounts.map((c) => [c.category, c._count])
-  )
+  const { totalProjects, totalCertificates, totalFeedback, pendingFeedback, feedbacks, categoryMap } = await getStats()
 
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
         <div className="mb-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 text-sm font-medium mb-4">
             <TrendingUp className="h-4 w-4" />
@@ -104,7 +119,6 @@ export default async function AdminPage() {
           </p>
         </div>
 
-        {/* Stat Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             label="Total Proyek"
@@ -132,7 +146,6 @@ export default async function AdminPage() {
           />
         </div>
 
-        {/* Category Summary */}
         <div className="rounded-2xl bg-white dark:bg-gray-900 border border-violet-100 dark:border-violet-900 p-6 mb-8">
           <h2 className="text-lg font-semibold mb-4">Feedback per Kategori</h2>
           <div className="flex gap-4">
@@ -145,7 +158,6 @@ export default async function AdminPage() {
           </div>
         </div>
 
-        {/* Feedback Table */}
         <div className="rounded-2xl bg-white dark:bg-gray-900 border border-violet-100 dark:border-violet-900 overflow-hidden">
           <div className="p-6 border-b border-violet-100 dark:border-violet-900">
             <h2 className="text-lg font-semibold">Riwayat Feedback</h2>

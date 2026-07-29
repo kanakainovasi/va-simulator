@@ -6,7 +6,6 @@ export const dynamic = 'force-dynamic'
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://virtualwork.id'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // Static pages
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: SITE_URL,
@@ -28,20 +27,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
-  // Dynamic project pages
-  const projects = await prisma.project.findMany({
-    select: {
-      id: true,
-      updatedAt: true,
-    },
-  })
+  try {
+    const projects = await prisma.project.findMany({
+      select: {
+        id: true,
+        updatedAt: true,
+      },
+    })
 
-  const projectPages: MetadataRoute.Sitemap = projects.map((project) => ({
-    url: `${SITE_URL}/project/${project.id}`,
-    lastModified: project.updatedAt,
-    changeFrequency: 'monthly' as const,
-    priority: 0.8,
-  }))
+    const projectPages: MetadataRoute.Sitemap = projects.map((project) => ({
+      url: `${SITE_URL}/project/${project.id}`,
+      lastModified: project.updatedAt,
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    }))
 
-  return [...staticPages, ...projectPages]
+    return [...staticPages, ...projectPages]
+  } catch {
+    return staticPages
+  }
 }
