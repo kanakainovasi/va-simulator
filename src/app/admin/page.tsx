@@ -1,6 +1,8 @@
 import { prisma } from '@/lib/prisma'
 import { Award, Folder, MessageSquare, TrendingUp, Clock, CheckCircle, AlertCircle } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Admin Dashboard | VirtualWork',
 }

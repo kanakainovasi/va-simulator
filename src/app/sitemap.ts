@@ -1,7 +1,9 @@
 import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/prisma'
 
-const SITE_URL = 'https://virtualwork.id'
+export const dynamic = 'force-dynamic'
+
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://virtualwork.id'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static pages
