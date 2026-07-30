@@ -15,12 +15,22 @@ import { DynamicBriefSection } from '@/components/DynamicBriefSection'
 import { ResourceCenter } from '@/components/ResourceCenter'
 import type { Metadata } from 'next'
 
+async function getProject(id: string) {
+  try {
+    await ensureDbReady()
+    const project = await prisma.project.findUnique({
+      where: { id },
+      include: { category: true },
+    })
+    return project
+  } catch (error) {
+    console.error('[PROJECT] Failed to fetch project:', error)
+    return null
+  }
+}
+
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  await ensureDbReady()
-  const project = await prisma.project.findUnique({
-    where: { id: params.id },
-    include: { category: true },
-  })
+  const project = await getProject(params.id)
 
   if (!project) {
     return { title: 'Project Not Found' }
@@ -34,11 +44,7 @@ export default async function ProjectPage({
 }: {
   params: { id: string }
 }) {
-  await ensureDbReady()
-  const project = await prisma.project.findUnique({
-    where: { id: params.id },
-    include: { category: true },
-  })
+  const project = await getProject(params.id)
 
   if (!project) {
     notFound()

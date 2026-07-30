@@ -9,21 +9,32 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  await ensureDbReady();
-  const { id } = await params;
-  const certificate = await prisma.certificate.findUnique({
-    where: { id },
-    include: {
-      user: { select: { name: true } },
-      project: {
-        select: {
-          title: true,
-          category: { select: { name: true } },
+async function getCertificate(id: string) {
+  try {
+    await ensureDbReady();
+    const certificate = await prisma.certificate.findUnique({
+      where: { id },
+      include: {
+        user: { select: { name: true } },
+        project: {
+          select: {
+            title: true,
+            category: { select: { name: true } },
+            level: true,
+          },
         },
       },
-    },
-  });
+    });
+    return certificate;
+  } catch (error) {
+    console.error('[CERTIFICATE] Failed to fetch certificate:', error);
+    return null;
+  }
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  const certificate = await getCertificate(id);
 
   if (!certificate) {
     return { title: 'Sertifikat Tidak Ditemukan | VirtualWork' };
@@ -37,24 +48,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function CertificatePage({ params }: PageProps) {
-  await ensureDbReady();
   const { id } = await params;
-
-  const certificate = await prisma.certificate.findUnique({
-    where: { id },
-    include: {
-      user: {
-        select: { name: true },
-      },
-      project: {
-        select: {
-          title: true,
-          category: { select: { name: true } },
-          level: true,
-        },
-      },
-    },
-  });
+  const certificate = await getCertificate(id);
 
   if (!certificate) {
     notFound();

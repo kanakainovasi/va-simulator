@@ -1,6 +1,7 @@
 import { put, get } from '@vercel/blob'
 import * as fs from 'fs'
 import * as path from 'path'
+import { execSync } from 'child_process'
 
 const DB_BLOB_PATHNAME = 'database/dev.db'
 const LOCAL_DB_PATH = '/tmp/dev.db'
@@ -83,5 +84,34 @@ export async function uploadDbToBlob(): Promise<void> {
     console.log('[DB-SYNC] Upload complete')
   } catch (error) {
     console.error('[DB-SYNC] Upload failed (non-fatal):', error)
+  }
+}
+
+/**
+ * Create an empty SQLite DB with the Prisma schema.
+ * Used as fallback when Blob download fails and no local DB exists.
+ */
+export function createEmptyDb(): boolean {
+  try {
+    const dir = path.dirname(LOCAL_DB_PATH)
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true })
+    }
+
+    console.log('[DB-SYNC] Creating empty SQLite DB...')
+    execSync(
+      `npx prisma db push --accept-data-loss --skip-generate`,
+      {
+        cwd: path.resolve(process.cwd()),
+        env: { ...process.env, DATABASE_URL: `file:${LOCAL_DB_PATH}` },
+        timeout: 30000,
+        stdio: 'pipe',
+      }
+    )
+    console.log('[DB-SYNC] Empty DB created successfully')
+    return true
+  } catch (error) {
+    console.error('[DB-SYNC] Failed to create empty DB:', error)
+    return false
   }
 }

@@ -29,27 +29,36 @@ interface ProjectsPageProps {
   searchParams: Promise<{ category?: string; level?: string }>
 }
 
-export default async function ProjectsPage({ searchParams }: ProjectsPageProps) {
-  await ensureDbReady()
-  const params = await searchParams
-
-  const projects = await prisma.project.findMany({
-    select: {
-      id: true,
-      title: true,
-      level: true,
-      brief: true,
-      category: {
-        select: {
-          slug: true,
-          name: true,
+async function getProjects() {
+  try {
+    await ensureDbReady()
+    const projects = await prisma.project.findMany({
+      select: {
+        id: true,
+        title: true,
+        level: true,
+        brief: true,
+        category: {
+          select: {
+            slug: true,
+            name: true,
+          },
         },
       },
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-  })
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+    return projects
+  } catch (error) {
+    console.error('[PROJECTS] Failed to fetch projects:', error)
+    return []
+  }
+}
+
+export default async function ProjectsPage({ searchParams }: ProjectsPageProps) {
+  const projects = await getProjects()
+  const params = await searchParams
 
   return (
     <main className="min-h-screen bg-background">
