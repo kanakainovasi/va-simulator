@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma, ensureDbReady, syncDbToBlob } from '@/lib/prisma'
+import { prisma, ensureDbReady } from '@/lib/prisma'
 import { hashPassword, createSession } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
@@ -54,9 +54,6 @@ export async function POST(request: NextRequest) {
       },
     })
     console.log('[REGISTER] User created with id:', user.id)
-
-    await syncDbToBlob()
-    console.log('[REGISTER] DB synced to Blob')
 
     console.log('[REGISTER] Creating session...')
     await createSession({

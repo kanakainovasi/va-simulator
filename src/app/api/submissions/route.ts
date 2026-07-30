@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma, ensureDbReady, syncDbToBlob } from '@/lib/prisma';
+import { prisma, ensureDbReady } from '@/lib/prisma';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 
@@ -66,8 +66,6 @@ export async function POST(request: Request) {
         status: 'COMPLETED',
       },
     });
-
-    await syncDbToBlob();
 
     return NextResponse.json({
       success: true,

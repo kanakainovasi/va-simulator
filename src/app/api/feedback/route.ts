@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma, ensureDbReady, syncDbToBlob } from '@/lib/prisma'
+import { prisma, ensureDbReady } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,8 +32,6 @@ export async function POST(request: NextRequest) {
         message,
       },
     })
-
-    await syncDbToBlob()
 
     // Send email via Web3Forms
     try {
