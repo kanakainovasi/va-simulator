@@ -1,1 +1,8 @@
-export default function PortfolioPage() { return (<div className="p-10 max-w-4xl mx-auto"><h1 className="text-3xl font-bold mb-4">Portofolio Saya</h1><p className="text-gray-600">Halaman demo portofolio virtual assistant sedang dipersiapkan.</p></div>); }
+export default function PortfolioPage() {
+  return (
+    <main style={{ padding: "40px", fontFamily: "sans-serif" }}>
+      <h1 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "16px" }}>Portofolio Virtual Assistant</h1>
+      <p style={{ color: "#666" }}>Halaman portofolio utama sedang dipersiapkan.</p>
+    </main>
+  );
+}
