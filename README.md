@@ -83,3 +83,5 @@ npm run seed       # Seed database with projects
 - Pastikan `JWT_SECRET` diatur dengan nilai yang kuat di production
 - Jangan commit file `.env` ke repository
 - Untuk production, pertimbangkan menggunakan database yang lebih robust (PostgreSQL, MySQL)
+
+
