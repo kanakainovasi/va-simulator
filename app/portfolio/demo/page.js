@@ -1,1 +1,8 @@
-export default function PortfolioDemoPage() { return (<div className="p-10 max-w-4xl mx-auto"><h1 className="text-3xl font-bold mb-4">Portofolio Demo</h1><p className="text-gray-600">Halaman demo portofolio virtual assistant.</p></div>); }
+export default function PortfolioDemoPage() {
+  return (
+    <div style={{ padding: "40px", fontFamily: "sans-serif" }}>
+      <h1>Portofolio Demo Virtual Assistant</h1>
+      <p>Halaman portofolio ini sedang dipersiapkan untuk Anda.</p>
+    </div>
+  );
+}
