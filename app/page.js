@@ -1,9 +1,15 @@
-﻿export default function Home() {
+﻿import TrafficDashboard from "@/components/TrafficDashboard"; // Sesuaikan dengan komponen utama Anda jika ada
+
+export default function Home() {
   return (
-    <main style={{ padding: "40px", fontFamily: "sans-serif", textAlign: "center" }}>
-      <h1>VA Simulator is Running</h1>
-      <p>Aplikasi berhasil dimuat dengan normal.</p>
-      <a href="/traffic" style={{ color: "blue", textDecoration: "underline" }}>Buka Dashboard Traffic</a>
+    <main>
+      <div style={{ textAlign: "center", padding: "20px" }}>
+        <h1>Selamat Datang di VA Simulator</h1>
+        <p>Aplikasi penilaian dan simulasi Virtual Assistant.</p>
+        <a href="/traffic" style={{ padding: "10px 20px", background: "#2563eb", color: "#fff", borderRadius: "5px", textDecoration: "none" }}>
+          Buka Dashboard Traffic
+        </a>
+      </div>
     </main>
   );
 }
