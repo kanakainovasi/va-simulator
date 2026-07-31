@@ -50,3 +50,4 @@ prisma/seeded.db-journal
 dev.log
 dev-error.log
 dev-output.log
+.vercel
