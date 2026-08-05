@@ -67,8 +67,40 @@ model Category {
   icon        String?
   description String?
   projects    Project[]
+  materis     Materi[]
+  latihans    Latihan[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+
+model Materi {
+  id          String    @id @default(cuid())
+  categoryId  String
+  slug        String    @unique
+  title       String
+  summary     String
+  content     String // Markdown atau teks terstruktur
+  level       String? // PENGANTAR, DASAR, LANJUTAN
+  order       Int       @default(0)
+  category    Category  @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Latihan {
+  id              String    @id @default(cuid())
+  categoryId      String
+  slug            String    @unique
+  title           String
+  description     String
+  instruction     String
+  questions       String // JSON array of soal
+  durationMinutes Int?
+  level           String? // EASY, MEDIUM, COMPLEX
+  order           Int       @default(0)
+  category        Category  @relation(fields: [categoryId], references: [id])
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 
 model Project {
