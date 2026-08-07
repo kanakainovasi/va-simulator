@@ -31,7 +31,7 @@ export async function middleware(request: NextRequest) {
 
   // Pengguna yang sudah login tidak boleh mengakses halaman login/register
   if (isAuthenticated && AUTH_PATHS.some((p) => pathname.startsWith(p))) {
-    return NextResponse.redirect(new URL('/materi', request.url))
+    return NextResponse.redirect(new URL('/latihan', request.url))
   }
 
   // Pengguna yang belum login dialihkan ke gerbang login

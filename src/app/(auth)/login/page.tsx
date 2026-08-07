@@ -3,7 +3,7 @@ import { AuthForm } from '@/components/auth/AuthForm'
 
 export const metadata: Metadata = {
   title: 'Masuk | VirtualWork - Simulasi Kerja Virtual',
-  description: 'Masuk ke akun VirtualWork untuk mengakses materi pembelajaran dan latihan simulasi kerja.',
+  description: 'Masuk ke akun VirtualWork untuk mengakses proyek latihan simulasi kerja.',
 }
 
 export default function LoginPage() {
@@ -17,13 +17,13 @@ export default function LoginPage() {
             Belajar & Latihan Kerja Virtual
           </h1>
           <p className="text-lg text-muted-foreground mb-8">
-            Masuk untuk mengakses materi pembelajaran, latihan simulasi kerja,
-            dan 11 kategori pekerjaan yang siap kamu pelajari.
+            Masuk untuk mengakses proyek latihan simulasi kerja nyata
+            di 11 kategori pekerjaan yang siap kamu pelajari.
           </p>
           <div className="space-y-4">
             {[
-              { step: '01', title: 'Baca Materi', desc: 'Pelajari teori dan panduan praktis setiap profesi.' },
-              { step: '02', title: 'Kerjakan Latihan', desc: 'Uji pemahaman dengan kuis dan simulasi per kategori.' },
+              { step: '01', title: 'Kerjakan Proyek', desc: 'Kerjakan simulasi kerja nyata dari brief yang realistis.' },
+              { step: '02', title: 'Bangun Portofolio', desc: 'Kumpulkan hasil kerja dan buktikan kemampuanmu.' },
               { step: '03', title: 'Kuasai Kategori', desc: 'Pilih kategori yang sesuai minat dan terus berkembang.' },
             ].map((item) => (
               <div key={item.step} className="flex items-start gap-4 p-4 rounded-xl bg-white/70 dark:bg-gray-900/70 border border-violet-100 dark:border-violet-900">

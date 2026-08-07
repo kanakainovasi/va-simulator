@@ -3,7 +3,7 @@ import { AuthForm } from '@/components/auth/AuthForm'
 
 export const metadata: Metadata = {
   title: 'Daftar | VirtualWork - Simulasi Kerja Virtual',
-  description: 'Buat akun VirtualWork gratis untuk mulai belajar materi dan mengerjakan latihan simulasi kerja.',
+  description: 'Buat akun VirtualWork gratis untuk mulai mengerjakan proyek latihan simulasi kerja.',
 }
 
 export default function RegisterPage() {
@@ -15,7 +15,7 @@ export default function RegisterPage() {
             <span className="gradient-text">Mulai Belajar</span>
           </h1>
           <p className="text-muted-foreground">
-            Daftar gratis dan akses semua materi & latihan
+            Daftar gratis dan akses semua proyek latihan
           </p>
         </div>
         <AuthForm mode="register" />

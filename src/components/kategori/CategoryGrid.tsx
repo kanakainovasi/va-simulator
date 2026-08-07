@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { BookOpen, PlayCircle, ArrowRight } from 'lucide-react'
+import { Briefcase, ArrowRight } from 'lucide-react'
 import { getCategoryIcon, getCategoryColor } from './CategoryIcon'
 import { cn } from '@/lib/utils'
 
@@ -9,8 +9,6 @@ export interface CategoryWithCounts {
   icon?: string | null
   description?: string | null
   _count?: {
-    materis?: number
-    latihans?: number
     projects?: number
   }
 }
@@ -25,8 +23,7 @@ export function CategoryGrid({ categories, showDescription = false }: CategoryGr
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {categories.map((cat) => {
         const Icon = getCategoryIcon(cat.slug, cat.icon)
-        const count = cat._count?.materis ?? 0
-        const latihanCount = cat._count?.latihans ?? 0
+        const projectCount = cat._count?.projects ?? 0
         return (
           <Link
             key={cat.slug}
@@ -49,12 +46,8 @@ export function CategoryGrid({ categories, showDescription = false }: CategoryGr
             ) : (
               <div className="flex items-center gap-4 text-xs text-muted-foreground">
                 <span className="inline-flex items-center gap-1">
-                  <BookOpen className="h-3.5 w-3.5" />
-                  {count} Materi
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <PlayCircle className="h-3.5 w-3.5" />
-                  {latihanCount} Latihan
+                  <Briefcase className="h-3.5 w-3.5" />
+                  {projectCount} Proyek
                 </span>
               </div>
             )}

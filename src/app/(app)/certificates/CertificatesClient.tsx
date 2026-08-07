@@ -114,7 +114,7 @@ export default function CertificatesClient() {
               Selesaikan proyek pertama kamu untuk mendapatkan sertifikat kelulusan.
             </p>
             <Button asChild className="bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600">
-              <Link href="/projects">Mulai Proyek</Link>
+              <Link href="/latihan">Mulai Proyek</Link>
             </Button>
           </div>
         ) : (

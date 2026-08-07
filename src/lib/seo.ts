@@ -129,7 +129,7 @@ export function generateCategoryMetadata(category: {
 }): Metadata {
   const title = `${category.name} - Proyek Simulasi`
   const description = `Koleksi proyek simulasi ${category.name} untuk membangun portofolio profesional. Kerjakan proyek nyata dan dapatkan sertifikat kelulusan.`
-  const url = `${SITE_URL}/projects?category=${category.slug}`
+  const url = `${SITE_URL}/latihan?category=${category.slug}`
 
   return {
     title,
@@ -143,7 +143,7 @@ export function generateCategoryMetadata(category: {
       'portofolio builder',
     ],
     alternates: {
-      canonical: `/projects?category=${category.slug}`,
+      canonical: `/latihan?category=${category.slug}`,
     },
     openGraph: {
       type: 'website',

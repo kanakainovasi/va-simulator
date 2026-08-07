@@ -1,14 +1,10 @@
 import { PrismaClient } from '@prisma/client'
-import { MATERI_SEED } from './data/materi'
-import { LATIHAN_SEED } from './data/latihan'
 
 const prisma = new PrismaClient()
 
 async function main() {
   console.log('Seeding database...')
 
-  await prisma.latihan.deleteMany()
-  await prisma.materi.deleteMany()
   await prisma.project.deleteMany()
   await prisma.category.deleteMany()
 
@@ -612,38 +608,8 @@ async function main() {
     await prisma.project.create({ data: project })
   }
 
-  const materiData = MATERI_SEED.map((m) => ({
-    categoryId: cat[m.categorySlug],
-    slug: m.slug,
-    title: m.title,
-    summary: m.summary,
-    content: m.content,
-    level: m.level,
-    order: m.order,
-  }))
-
-  for (const materi of materiData) {
-    await prisma.materi.create({ data: materi })
-  }
-
-  const latihanData = LATIHAN_SEED.map((l) => ({
-    categoryId: cat[l.categorySlug],
-    slug: l.slug,
-    title: l.title,
-    description: l.description,
-    instruction: l.instruction,
-    questions: JSON.stringify(l.questions),
-    durationMinutes: l.durationMinutes,
-    level: l.level,
-    order: l.order,
-  }))
-
-  for (const latihan of latihanData) {
-    await prisma.latihan.create({ data: latihan })
-  }
-
   console.log('Seeding completed successfully!')
-  console.log(`Created ${categories.length} categories, ${projects.length} projects, ${materiData.length} materi, and ${latihanData.length} latihan.`)
+  console.log(`Created ${categories.length} categories and ${projects.length} projects.`)
 }
 
 main()

@@ -95,9 +95,9 @@ export default async function ProjectPage({
       />
       <main className="min-h-screen bg-background">
         <div className="max-w-4xl mx-auto px-4 py-8">
-          <Link href="/projects">
+          <Link href="/latihan">
             <Button variant="ghost" size="sm" className="mb-6 gap-2">
-              &larr; Back to Projects
+              &larr; Back to Latihan
             </Button>
           </Link>
 

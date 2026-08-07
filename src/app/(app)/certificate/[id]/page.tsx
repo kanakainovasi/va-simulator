@@ -76,7 +76,7 @@ export default async function CertificatePage({ params }: PageProps) {
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-6 flex items-center justify-between">
           <Link
-            href="/projects"
+            href="/latihan"
             className="inline-flex items-center text-sm text-slate-500 transition-colors hover:text-slate-700"
           >
             <svg
@@ -92,7 +92,7 @@ export default async function CertificatePage({ params }: PageProps) {
                 d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
               />
             </svg>
-            Back to Projects
+            Back to Latihan
           </Link>
 
           <CertificateActions certificateId={certificate.id} />

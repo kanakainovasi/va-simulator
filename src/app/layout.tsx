@@ -11,10 +11,10 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
   title: 'VirtualWork - Simulasi Kerja Virtual & Pembelajaran',
-  description: 'Platform pembelajaran dan simulasi kerja virtual: baca materi, kerjakan latihan, dan pelajari 11 kategori pekerjaan.',
+  description: 'Platform pembelajaran dan simulasi kerja virtual: kerjakan proyek latihan nyata dan pelajari 11 kategori pekerjaan.',
   openGraph: {
     title: 'VirtualWork - Simulasi Kerja Virtual & Pembelajaran',
-    description: 'Belajar materi, kerjakan latihan simulasi kerja, dan kuasai 11 kategori pekerjaan.',
+    description: 'Kerjakan proyek latihan simulasi kerja, bangun portofolio, dan kuasai 11 kategori pekerjaan.',
     type: 'website',
   },
 }

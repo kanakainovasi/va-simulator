@@ -3,9 +3,9 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getCategoryIcon, getCategoryColor } from '@/components/kategori/CategoryIcon'
-import { MateriList } from '@/components/materi/MateriCard'
-import { LatihanList } from '@/components/latihan/LatihanCard'
-import { ArrowLeft, BookOpen, PlayCircle, LayoutGrid } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { getCategoryBySlug, getLevelByValue } from '@/lib/constants'
+import { ArrowLeft, Briefcase, LayoutGrid, ArrowRight } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,49 +15,29 @@ interface Props {
 
 async function getCategoryData(slug: string) {
   try {
-    const [category, materis, latihans, projects] = await Promise.all([
+    const [category, projects] = await Promise.all([
       prisma.category.findUnique({ where: { slug } }),
-      prisma.materi.findMany({
-        where: { category: { slug } },
-        orderBy: { order: 'asc' },
-        include: { category: true },
-      }),
-      prisma.latihan.findMany({
-        where: { category: { slug } },
-        orderBy: { order: 'asc' },
-        include: { category: true },
-      }),
       prisma.project.findMany({
         where: { category: { slug } },
-        select: { id: true, title: true, level: true },
+        select: { id: true, title: true, level: true, brief: true },
         orderBy: { createdAt: 'asc' },
       }),
     ])
-    return { category, materis, latihans, projects }
+    return { category, projects }
   } catch {
-    return { category: null, materis: [], latihans: [], projects: [] }
+    return { category: null, projects: [] }
   }
 }
 
 export default async function KategoriDetailPage({ params }: Props) {
   const { slug } = await params
-  const { category, materis, latihans, projects } = await getCategoryData(slug)
+  const { category, projects } = await getCategoryData(slug)
 
   if (!category) {
     notFound()
   }
 
   const Icon = getCategoryIcon(category.slug, category.icon)
-
-  const questionCounts: Record<string, number> = {}
-  for (const latihan of latihans) {
-    try {
-      const parsed = JSON.parse(latihan.questions)
-      questionCounts[latihan.id] = Array.isArray(parsed) ? parsed.length : 0
-    } catch {
-      questionCounts[latihan.id] = 0
-    }
-  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -86,78 +66,65 @@ export default async function KategoriDetailPage({ params }: Props) {
             )}
             <div className="flex flex-wrap gap-3 mt-4 text-sm">
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 font-medium">
-                <BookOpen className="h-4 w-4" />
-                {materis.length} Materi
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-fuchsia-100 dark:bg-fuchsia-900/30 text-fuchsia-700 dark:text-fuchsia-300 font-medium">
-                <PlayCircle className="h-4 w-4" />
-                {latihans.length} Latihan
+                <Briefcase className="h-4 w-4" />
+                {projects.length} Proyek
               </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Materi */}
-      <section className="mb-12">
+      {/* Proyek */}
+      <section>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl sm:text-2xl font-bold">
-            <span className="gradient-text">Materi</span> Pembelajaran
+            <span className="gradient-text">Proyek</span> Latihan {category.name}
           </h2>
           <Link
-            href={`/materi?kategori=${category.slug}`}
+            href={`/latihan?category=${category.slug}`}
             className="text-sm font-medium text-violet-600 dark:text-violet-400 hover:underline"
           >
             Lihat semua
           </Link>
         </div>
-        <MateriList items={materis} />
-      </section>
 
-      {/* Latihan */}
-      <section className="mb-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold">
-            <span className="gradient-text">Latihan</span> & Simulasi
-          </h2>
-          <Link
-            href={`/latihan?kategori=${category.slug}`}
-            className="text-sm font-medium text-violet-600 dark:text-violet-400 hover:underline"
-          >
-            Lihat semua
-          </Link>
-        </div>
-        <LatihanList items={latihans} questionCounts={questionCounts} />
-      </section>
-
-      {/* Proyek (fitur lama, dipertahankan) */}
-      {projects.length > 0 && (
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl sm:text-2xl font-bold">
-              <span className="gradient-text">Proyek</span> Simulasi Kerja
-            </h2>
-            <Link
-              href={`/projects?category=${category.slug}`}
-              className="text-sm font-medium text-violet-600 dark:text-violet-400 hover:underline"
-            >
-              Lihat semua
-            </Link>
+        {projects.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl bg-white dark:bg-gray-900 border border-violet-100 dark:border-violet-900">
+            <Briefcase className="h-12 w-12 text-muted-foreground mb-4" />
+            <p className="text-muted-foreground">Belum ada proyek pada kategori ini.</p>
           </div>
+        ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {projects.map((project) => (
-              <Link
-                key={project.id}
-                href={`/project/${project.id}`}
-                className="p-5 rounded-2xl bg-white dark:bg-gray-900 border border-violet-100 dark:border-violet-900 card-hover"
-              >
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{project.level}</span>
-                <h3 className="font-semibold mt-1.5 line-clamp-2">{project.title}</h3>
-              </Link>
-            ))}
+            {projects.map((project) => {
+              const categoryData = getCategoryBySlug(category.slug)
+              const levelData = getLevelByValue(project.level)
+              return (
+                <Link
+                  key={project.id}
+                  href={`/project/${project.id}`}
+                  className="group p-5 rounded-2xl bg-white dark:bg-gray-900 border border-violet-100 dark:border-violet-900 card-hover flex flex-col"
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <Badge className={categoryData?.color ?? 'bg-gray-100 text-gray-800'}>
+                      {category.name}
+                    </Badge>
+                    {levelData && (
+                      <Badge variant={levelData.color}>{levelData.label}</Badge>
+                    )}
+                  </div>
+                  <h3 className="font-semibold mt-1 line-clamp-2 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors flex-1">
+                    {project.title}
+                  </h3>
+                  <span className="inline-flex items-center gap-1 mt-4 text-sm font-medium text-violet-600 dark:text-violet-400">
+                    Kerjakan Proyek
+                    <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+                  </span>
+                </Link>
+              )
+            })}
           </div>
-        </section>
-      )}
+        )}
+      </section>
     </div>
   )
 }

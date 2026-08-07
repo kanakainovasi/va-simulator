@@ -25,8 +25,8 @@ export function Footer() {
             <h3 className="font-semibold mb-4">Navigasi</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/projects" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Proyek
+                <Link href="/latihan" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Latihan & Proyek
                 </Link>
               </li>
               <li>

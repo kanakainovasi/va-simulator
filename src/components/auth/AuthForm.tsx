@@ -7,7 +7,7 @@ import { useAuth } from './AuthProvider'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Mail, Lock, User, Eye, EyeOff, Loader2, BookOpen, PlayCircle, LayoutGrid } from 'lucide-react'
+import { Mail, Lock, User, Eye, EyeOff, Loader2, Briefcase, PlayCircle, LayoutGrid } from 'lucide-react'
 
 interface AuthFormProps {
   mode: 'login' | 'register'
@@ -39,7 +39,7 @@ function AuthFormInner({ mode }: AuthFormProps) {
 
       if (result.success) {
         const next = searchParams.get('next')
-        router.push(next && next.startsWith('/') && !next.startsWith('//') ? next : '/materi')
+        router.push(next && next.startsWith('/') && !next.startsWith('//') ? next : '/latihan')
         router.refresh()
       } else {
         setError(result.error || (isLogin ? 'Gagal login' : 'Gagal mendaftar'))
@@ -187,8 +187,8 @@ function AuthFormInner({ mode }: AuthFormProps) {
 
       <div className="grid grid-cols-3 gap-3 mt-6">
         {[
-          { icon: BookOpen, label: 'Baca Materi' },
-          { icon: PlayCircle, label: 'Kerjakan Latihan' },
+          { icon: Briefcase, label: 'Kerjakan Proyek' },
+          { icon: PlayCircle, label: 'Bangun Portofolio' },
           { icon: LayoutGrid, label: '11 Kategori' },
         ].map((item) => (
           <div
